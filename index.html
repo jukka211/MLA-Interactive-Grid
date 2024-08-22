@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLA Interactive Grid</title>
+    <!-- Link to p5.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 20px;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button id="resetButton">Reset</button>
+       
+    </div>
+    <script>
+        let grid;
+        let cols = 30;
+        let rows = 3;
+        let rectWidth;
+        let rectHeight;
+        let cornerRadius = 0;
+        let bgColor = 0; // Background color (white initially)
+        let gridColor = 0; // Grid color (black initially)
+
+        function setup() {
+            rectWidth = windowWidth / cols;
+            rectHeight = windowHeight / rows;
+            createCanvas(windowWidth, windowHeight);
+            grid = create2DArray(cols, rows);
+            initializeGrid();
+
+            // Attach event listeners to buttons
+            document.getElementById('resetButton').addEventListener('click', resetGrid);
+      
+        }
+
+        function draw() {
+            background(bgColor);
+            drawGrid();
+        }
+
+        function create2DArray(cols, rows) {
+            let arr = new Array(cols);
+            for (let i = 0; i < cols; i++) {
+                arr[i] = new Array(rows);
+            }
+            return arr;
+        }
+
+        function initializeGrid() {
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    grid[i][j] = false; // All rectangles are initially white
+                }
+            }
+        }
+
+        function drawGrid() {
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    let x = i * rectWidth;
+                    let y = j * rectHeight;
+                    if (
+                        mouseX > x &&
+                        mouseX < x + rectWidth &&
+                        mouseY > y &&
+                        mouseY < y + rectHeight
+                    ) {
+                        grid[i][j] = true; // Set rectangle to black if hovered
+                    }
+                    if (grid[i][j]) {
+                        fill(gridColor); // Set to grid color if hovered
+                    } else {
+                        fill(bgColor === 255 ? 0 : 255); // Opposite of background color otherwise
+                    }
+                    stroke(0);
+                    rect(x, y, rectWidth, rectHeight, cornerRadius);
+                }
+            }
+        }
+
+        function resetGrid() {
+            initializeGrid();
+        }
+
+        function toggleBgColor() {
+            bgColor = bgColor === 255 ? 0 : 255; // Switch between white and black
+        }
+
+        function toggleGridColor() {
+            gridColor = gridColor === 0 ? 255 : 0; // Switch between black and white
+        }
+
+        function windowResized() {
+            rectWidth = windowWidth / cols;
+            rectHeight = windowHeight / rows;
+            resizeCanvas(windowWidth, windowHeight);
+            initializeGrid();
+        }
+    </script>
+</body>
+</html>
